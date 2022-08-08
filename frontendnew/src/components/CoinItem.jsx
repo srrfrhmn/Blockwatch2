@@ -1,23 +1,17 @@
+import { current } from "@reduxjs/toolkit";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSelector } from "react";
 import { useDispatch } from "react-redux"
-import {delCoin} from "../features/coins/coinSlice"
+import {delCoin, getCoin} from "../features/coins/coinSlice"
 
-export default function CoinItem({coin}) {
+
+
+
+export default function CoinItem({coin,  currentPrice}) {
     const dispatch = useDispatch();
 
-    let getCoinURL = "http://localhost:5001/api/coins/getCoin"
-
-    let getCoinById = async (id) => {
-        //send get request to url with id in the request body as coin
-        let response = await axios.get(getCoinURL, {
-            params: {
-                coin: id
-            }
-        })
-        return response.data
-    }
-
+    //console.log(currentPrice, "currentPrice in coinItem")
+    
 
     return (
         <>
@@ -25,8 +19,8 @@ export default function CoinItem({coin}) {
             <div>
                 {new Date(coin.createdAt).toLocaleDateString('en-US')}
             </div>
-            <h2>{coin.coin}</h2>
-            <h1></h1>
+            <h1>{coin.coin}</h1>
+            <h1>{currentPrice}</h1>
             <button onClick={() => dispatch(delCoin(coin.coin))} className="close">X</button>
         </div>
         </>
