@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import CoinForm from "../components/CoinForm";
@@ -9,6 +10,9 @@ import { getCoins, reset} from "../features/coins/coinSlice";
 import Topten from "../components/topten/Topten";
 
 export default function Dashboard() {
+
+    const GET_COIN = '/api/coins/getCoin'
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -16,8 +20,46 @@ export default function Dashboard() {
         (state) => state.auth
     );
 
-    const {coins, isLoading, isError, message} = useSelector(
+    const {coins, doUpdate, isLoading, isError, message} = useSelector(
         (state) => state.coins);
+    
+    
+    let cprices = [];
+
+    const [ prices , setPrices ] = useState([]);
+    const [coinData, setCoinData] = useState([]);
+    const [number, setNumber] = useState(0);
+    const [cryp, setCryp] = useState([]);
+
+    const getCoin = async (xcoin) => {
+        try {
+            const response = await axios.post(GET_COIN, {
+                coin: xcoin
+            })
+            setCoinData(response.data)
+            return response.data
+        } catch (error) {
+            console.log("error in getCoin", error)
+            return error
+        }
+
+    }
+
+    useEffect(() => {
+        async function getPrices() {
+            try {
+                const promises = coins.map(async (coin) => {
+                    const coinPrice = await getCoin(coin.coin);
+                    return coinPrice.market_data.current_price.usd;
+                });
+            const prices = await Promise.all(promises);
+            setPrices(prices);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getPrices();
+    }, [coins]);
 
     useEffect(() => {
         if(isError){
@@ -33,13 +75,11 @@ export default function Dashboard() {
         } catch(e){
             console.log(e);
         }
-        // dispatch(getCoins());
-        console.log("using effect");
         return () => {
             dispatch(reset())
         }
-    }, []);
-    // }, [user,navigate, isError, message, dispatch]);
+    }, [doUpdate]);
+    
     if(isLoading){
         return <Spinner />
     }
@@ -54,13 +94,15 @@ export default function Dashboard() {
         <section className="content">
             {coins.length > 0 ? (
                 <div className="coins">
-                    {coins.map((coin) => (
-                        <CoinItem key={coin._id} coin={coin} />
-                    ))}
-                </div>
+                    {coins.map((coin, idx) => 
+                        // This is where I am trying to pass the current price to the coinItem child component
+                        <CoinItem key={coin._id} coin={coin} currentPrice={prices[idx]}/>
+                    )}
+                </div> 
             ) : (<h3> You have not set any goals </h3>)}
         </section>
-        <Topten />
+        <button onClick={() => getCoin("bitcoin")}>Refresh</button>
+        {/* <Topten /> */}
         </>
     )
 }

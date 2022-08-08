@@ -5,7 +5,7 @@ const { protect } = require("../index_middleware/authMiddleware");
 const router = express.Router();
 
 router.route
-router.route("/getCoin").get(getCoin);
+router.route("/getCoin").post(getCoin);
 router.route("/getTop10").get(getTop10);
 router.route("/coinlist").get(protect, getCoins).post(protect, addCoin).delete(protect, deleteCoin);
 

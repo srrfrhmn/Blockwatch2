@@ -6,13 +6,14 @@ const CGO = require("../api_references/api_strings").CGO
 const Coin = require("../models/coinWatchModel");
 const User = require("../models/userModel");
 
+
 // const CoinList = require("../models/coinModel");
 const getCoinByID = async (id) => {
     try {
         const data = await axios.get(CGO.BASE_URL + CGO.COINS + id + CGO.COINS_PARAM);
         return data.data;
     } catch (error) {
-        console.error(error);
+        return error;
     }
 };
 

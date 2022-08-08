@@ -9,8 +9,10 @@ export default function CoinForm() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
+        console.log("submitting")
+        console.log({coin})
         dispatch(addCoin({coin}));
+        setCoin('');
     }
 
 
