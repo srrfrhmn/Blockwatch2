@@ -1,8 +1,5 @@
-import { current } from "@reduxjs/toolkit";
-import axios from "axios";
-import React, { useEffect, useState, useSelector } from "react";
 import { useDispatch } from "react-redux"
-import {delCoin, getCoin} from "../features/coins/coinSlice"
+import {delCoin} from "../features/coins/coinSlice"
 
 
 

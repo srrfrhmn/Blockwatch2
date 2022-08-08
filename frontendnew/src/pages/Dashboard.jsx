@@ -22,14 +22,10 @@ export default function Dashboard() {
 
     const {coins, doUpdate, isLoading, isError, message} = useSelector(
         (state) => state.coins);
-    
-    
-    let cprices = [];
+
 
     const [ prices , setPrices ] = useState([]);
     const [coinData, setCoinData] = useState([]);
-    const [number, setNumber] = useState(0);
-    const [cryp, setCryp] = useState([]);
 
     const getCoin = async (xcoin) => {
         try {
@@ -55,7 +51,7 @@ export default function Dashboard() {
             const prices = await Promise.all(promises);
             setPrices(prices);
             } catch (error) {
-                console.error(error);
+                console.error("error in get prices", error);
             }
         }
         getPrices();
@@ -95,13 +91,11 @@ export default function Dashboard() {
             {coins.length > 0 ? (
                 <div className="coins">
                     {coins.map((coin, idx) => 
-                        // This is where I am trying to pass the current price to the coinItem child component
                         <CoinItem key={coin._id} coin={coin} currentPrice={prices[idx]}/>
                     )}
                 </div> 
             ) : (<h3> You have not set any goals </h3>)}
         </section>
-        <button onClick={() => getCoin("bitcoin")}>Refresh</button>
         {/* <Topten /> */}
         </>
     )
